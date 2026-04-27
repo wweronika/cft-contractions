@@ -107,6 +107,7 @@ def cut_edges_in_one_channel(graph, edges_to_cut, channel_order):
         graph_tmp.cut_edge_4_neighbour_vertices(edge, channel)
         path = f"output/{channel_order}_full_path/entropy_graph_{channel_order[:(i+1)]}.png"
         save_entropy_graph(graph_tmp, path=path)
+        print(f"channels cut: {channel_order[:(i+1)]}, n loops: {graph_tmp.free_loops}")
 
     plt.close()
     print(f"channels: {channel_order}, n loops: {graph_tmp.free_loops}")

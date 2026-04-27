@@ -9,15 +9,22 @@ graph = EntropyGraph(n)
 
 # print(graph.edge_to_vertices)
 # save_entropy_graph(graph, path=f"output_before_cut/entropy_graph_before_cutting_n_{n}.png")
+# edges_to_cut = ["e_top_left_half_0", 
+#                 "e_top_between_squares_0",
+#                 "e_bottom_between_squares_0",
+#                 "e_top_right_half_1",
+#                 "e_bottom_between_squares_1"
+# ]
+
 edges_to_cut = ["e_top_left_half_0", 
                 "e_top_between_squares_0",
-                "e_bottom_between_squares_0",
                 "e_top_right_half_1",
-                "e_bottom_between_squares_1"
+                "e_bottom_0",
+                "e_bottom_1"
 ]
 
 # channels = "sssst"
-channels = "sssts"
+channels = "tstss"
 
 # graph.cut_edge("e_top_left_half_0", channel="s")
 # save_entropy_graph_with_highlighted_edges(graph, edges_to_cut, path="output_before_cut/entropy_graph_before_cut_n_{n}_highlighted.png")
