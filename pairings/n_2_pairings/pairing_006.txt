@@ -1,0 +1,10 @@
+e_top_left_half_0
+e_bottom_0
+e_top_between_squares_0
+e_bottom_1
+e_top_right_half_1
+e_top_right_half_2
+e_left_2
+e_bottom_between_squares_2
+e_top_left_half_3
+e_right_3

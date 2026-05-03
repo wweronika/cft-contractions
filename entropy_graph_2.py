@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 from matplotlib.patches import FancyArrowPatch
 from itertools import product
+import os
 
 class HorizontalEdge:
     def __init__(self, name, u, v, is_top_lane):
@@ -41,6 +42,7 @@ class Vertex:
 
 class EntropyGraph2:
     def __init__(self, n):
+        self.n = n
         self.edges = {}
         self.vertices = {}
         self._build(n)
@@ -380,6 +382,7 @@ class EntropyGraph2:
             ax.set_title(title, fontsize=14)
         n_components = self.count_components()
         subtitle = f"n loops: {n_components["n_loops"]}, n_lines: {n_components["n_lines"]}"
+        print(f"n loops: {n_components["n_loops"]}, channels: {title}")
         ax.text(
             0.5,  0.94,
             subtitle,
@@ -393,6 +396,143 @@ class EntropyGraph2:
         plt.savefig(f'{outdir}/{title}.png')
         plt.close()
         return fig, ax
+    
+    def draw_with_highlighted_edges(self, highlighted_edges, ax=None, show_names=True, figsize=(10, 4), title="graph_before_cutting", outdir="out"):
+        if ax is None:
+            fig, ax = plt.subplots(figsize=figsize)
+        else:
+            fig = ax.figure
+
+        # Draw edges
+        color = "black"
+        for edge in self.edges.values():
+            color = "black"
+            if edge.name in highlighted_edges:
+                color = "red"
+            if isinstance(edge, HorizontalEdge):
+                x1, y1 = edge.left_vertex.x, edge.left_vertex.y
+                x2, y2 = edge.right_vertex.x, edge.right_vertex.y
+
+                is_wraparound = x2 < x1
+                if edge.is_top_lane:
+                    angle = "0.18"
+                else:
+                    angle = "-0.18"
+                if is_wraparound:
+                    arc = FancyArrowPatch(
+                        (x1, y1),
+                        (x2, y2),
+                        arrowstyle="-",
+                        connectionstyle=f"arc3,rad={angle}",
+                        linewidth=2,
+                        mutation_scale=1,
+                        color=color
+                    )
+                    ax.add_patch(arc)
+                else:
+                    ax.plot([x1, x2], [y1, y2], linewidth=2, color=color)
+            elif isinstance(edge, VerticalEdge):
+                x1, y1 = edge.up_vertex.x, edge.up_vertex.y
+                x2, y2 = edge.down_vertex.x, edge.down_vertex.y
+                ax.plot([x1, x2], [y1, y2], linewidth=2, color=color)
+            else:
+                continue
+
+            if show_names:
+                ax.text(
+                    (x1 + x2) / 2,
+                    (y1 + y2) / 2,
+                    edge.name,
+                    fontsize=8,
+                    ha="center",
+                    va="center",
+                )
+
+        # Draw vertices
+        xs = [v.x for v in self.vertices.values()]
+        ys = [v.y for v in self.vertices.values()]
+
+        ax.scatter(xs, ys, s=20, zorder=3, color="green")
+
+        if show_names:
+            for v in self.vertices.values():
+                ax.text(
+                    v.x,
+                    v.y + 8,
+                    v.name,
+                    fontsize=8,
+                    ha="center",
+                    va="bottom",
+                )
+
+        ax.set_aspect("equal", adjustable="box")
+        ax.axis("off")
+        if title:
+            ax.set_title(title, fontsize=14)
+        n_components = self.count_components()
+        subtitle = f"n loops: {n_components["n_loops"]}, n_lines: {n_components["n_lines"]}"
+        print(f"n loops: {n_components["n_loops"]}, channels: {title}")
+        ax.text(
+            0.5,  0.94,
+            subtitle,
+            transform=ax.transAxes,
+            ha="center",
+            va="bottom",
+            fontsize=10
+        )
+
+        # plt.show()
+        plt.savefig(f'{outdir}/{title}.png')
+        plt.close()
+        return fig, ax
+
+    def get_edges_to_cut_across_1(n):
+        edges_to_cut = []
+        for i in range(n):
+            edges_to_cut.append(f"e_top_left_half_{2 * i}")
+            edges_to_cut.append(f"e_top_between_squares_{2 * i}")
+            edges_to_cut.append(f"e_top_right_half_{(2 * i + 1) % (2 * n)}")
+            edges_to_cut.append(f"e_bottom_between_squares_{2 * i}")
+            edges_to_cut.append(f"e_bottom_between_squares_{(2 * i + 1) % (2 * n)}")
+        return edges_to_cut
+    
+    def get_edges_to_cut_across_2(n):
+        edges_to_cut = []
+        for i in range(n):
+            edges_to_cut.append(f"e_top_left_half_{2 * i}")
+            edges_to_cut.append(f"e_top_between_squares_{2 * i}")
+            edges_to_cut.append(f"e_top_right_half_{2 * i + 1}")
+            edges_to_cut.append(f"e_bottom_{2 * i}")
+            edges_to_cut.append(f"e_bottom_{2 * i + 1}")
+        return edges_to_cut
+    
+    def get_edges_to_cut_within_1(n):
+        edges_to_cut = []
+        for i in range(n):
+            edges_to_cut.append(f"e_top_left_half_{2 * i}")
+            edges_to_cut.append(f"e_top_right_half_{2 * i + 1}")
+            edges_to_cut.append(f"e_right_{2 * i}")
+            edges_to_cut.append(f"e_left_{2 * i + 1}")
+            edges_to_cut.append(f"e_bottom_between_squares_{2 * i + 1}")
+        return edges_to_cut
+    
+    # Works for even only
+    def get_edges_to_cut_within_2(n):
+        edges_to_cut = []
+        for i in range(n // 2):
+            edges_to_cut.append(f"e_top_left_half_{4 * i}")
+            edges_to_cut.append(f"e_top_right_half_{4 * i + 1}")
+            edges_to_cut.append(f"e_top_between_squares_{4 * i}")
+            edges_to_cut.append(f"e_bottom_{4 * i}")
+            edges_to_cut.append(f"e_bottom_{4 * i + 1}")
+
+            edges_to_cut.append(f"e_top_right_half_{4 * i + 2}")
+            edges_to_cut.append(f"e_top_left_half_{4 * i + 3}")
+            edges_to_cut.append(f"e_left_{4 * i + 2}")
+            edges_to_cut.append(f"e_right_{4 * i + 3}")
+            edges_to_cut.append(f"e_bottom_between_squares_{4 * i + 2}")
+        return edges_to_cut
+
 
 
 channels = ["s", "t"]
@@ -419,14 +559,27 @@ channels = ["s", "t"]
 #     g.cut_edges(edges_to_cut_within, channel_order)
 #     g.draw(show_names=False, title=''.join(channel_order), outdir=outdir_within)
 
+n = 1
 
-outdir_across_2 = "output_new_n_1_across_wavefunctions_2"
-edges_to_cut_across_2 = ["e_top_left_half_0",
-            "e_top_right_half_1",
-            "e_top_between_squares_0",
-            "e_bottom_0",
-            "e_bottom_1"]
-for channel_order in product(channels, repeat=len(edges_to_cut_across_2)):
-    g = EntropyGraph2(1)
-    g.cut_edges(edges_to_cut_across_2, channel_order)
-    g.draw(show_names=False, title=''.join(channel_order), outdir=outdir_across_2)
+# outdir = f"output_new_n_{n}_across_wavefunctions_1"
+# os.makedirs(outdir, exist_ok=True)
+# edges_to_cut = EntropyGraph2.get_edges_to_cut_across_1(n)
+
+outdir = f"output_new_n_{n}_within_wavefunctions_1"
+os.makedirs(outdir, exist_ok=True)
+edges_to_cut = EntropyGraph2.get_edges_to_cut_within_1(n)
+
+# outdir = f"output_new_n_{n}_across_wavefunctions_2"
+# os.makedirs(outdir, exist_ok=True)
+# edges_to_cut = EntropyGraph2.get_edges_to_cut_across_2(n)
+
+# outdir = f"output_new_n_{n}_within_wavefunctions_2"
+# os.makedirs(outdir, exist_ok=True)
+# edges_to_cut = EntropyGraph2.get_edges_to_cut_within_2(n)
+
+g = EntropyGraph2(n)
+g.draw_with_highlighted_edges(edges_to_cut, show_names=False, title=f'n_{2}_before_cutting', outdir=outdir)
+for channel_order in product(channels, repeat=len(edges_to_cut)):
+    g = EntropyGraph2(n)
+    g.cut_edges(edges_to_cut, channel_order)
+    g.draw(show_names=False, title=''.join(channel_order), outdir=outdir)
