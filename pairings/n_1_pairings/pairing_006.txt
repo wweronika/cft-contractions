@@ -1,5 +1,0 @@
-e_top_right_half_0
-e_bottom_between_squares_0
-e_left_0
-e_top_left_half_1
-e_right_1

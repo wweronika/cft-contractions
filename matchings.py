@@ -3,6 +3,8 @@ from draw_graphs import save_entropy_graph_with_highlighted_edges, save_squares_
 from entropy_graph import *
 from squares_graph import *
 
+from pathlib import Path
+
 def matchings_of_L1R1_graph(n):
     if n == 0:
         return matchings_L1R1_zero_case()
@@ -323,19 +325,30 @@ def matchings_of_entropy_graph(n):
 
     return all_matchings
 
+def save_matchings(ms, n):
+    outdir = Path(f"pairings/n_{n}_pairings")
+    outdir.mkdir(parents=True, exist_ok=True)
+
+    for i, matching in enumerate(ms):
+        path = outdir / f"pairing_{i:03d}.txt"
+        with path.open("w") as f:
+            for edge in matching:
+                f.write(f"{edge}\n")
+
 # m = matchings_of_L1R0_graph(3)
 # print(len(m))
 
-# n = 2
+n = 2
 
-# graph = EntropyGraph(n)
-# ms = matchings_of_entropy_graph(n)
+graph = EntropyGraph(n)
+ms = matchings_of_entropy_graph(n)
+save_matchings(ms, n)
 # print(f"len of entropy: {len(ms)}")
 # for i, m in enumerate(ms):
 #     print(m)
-#     save_entropy_graph_with_highlighted_edges(graph, m, path=f"output_matchings/entropy_graph_n_{n}_matching_{i}.png")
+    # save_entropy_graph_with_highlighted_edges(graph, m, path=f"output_matchings/entropy_graph_n_{n}_matching_{i}.png")
 
-# exit()
+exit()
 
 # graph = SquaresGraphL0R0(n)
 # ms = matchings_of_L0R0_graph(n)

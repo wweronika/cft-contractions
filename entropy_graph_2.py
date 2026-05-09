@@ -381,8 +381,8 @@ class EntropyGraph2:
         if title:
             ax.set_title(title, fontsize=14)
         n_components = self.count_components()
-        subtitle = f"n loops: {n_components["n_loops"]}, n_lines: {n_components["n_lines"]}"
-        print(f"n loops: {n_components["n_loops"]}, channels: {title}")
+        subtitle = f"n loops: {n_components['n_loops']}, n_lines: {n_components['n_lines']}"
+        print(f"n loops: {n_components['n_loops']}, channels: {title}")
         ax.text(
             0.5,  0.94,
             subtitle,
@@ -470,7 +470,7 @@ class EntropyGraph2:
         if title:
             ax.set_title(title, fontsize=14)
         n_components = self.count_components()
-        subtitle = f"n loops: {n_components["n_loops"]}, n_lines: {n_components["n_lines"]}"
+        subtitle = f"n loops: {n_components['n_loops']}, n_lines: {n_components['n_lines']}"
         print(f"n loops: {n_components["n_loops"]}, channels: {title}")
         ax.text(
             0.5,  0.94,
@@ -559,15 +559,15 @@ channels = ["s", "t"]
 #     g.cut_edges(edges_to_cut_within, channel_order)
 #     g.draw(show_names=False, title=''.join(channel_order), outdir=outdir_within)
 
-n = 1
+# n = 2
 
 # outdir = f"output_new_n_{n}_across_wavefunctions_1"
 # os.makedirs(outdir, exist_ok=True)
 # edges_to_cut = EntropyGraph2.get_edges_to_cut_across_1(n)
 
-outdir = f"output_new_n_{n}_within_wavefunctions_1"
-os.makedirs(outdir, exist_ok=True)
-edges_to_cut = EntropyGraph2.get_edges_to_cut_within_1(n)
+# outdir = f"output_new_n_{n}_within_wavefunctions_1"
+# os.makedirs(outdir, exist_ok=True)
+# edges_to_cut = EntropyGraph2.get_edges_to_cut_within_1(n)
 
 # outdir = f"output_new_n_{n}_across_wavefunctions_2"
 # os.makedirs(outdir, exist_ok=True)
@@ -577,9 +577,9 @@ edges_to_cut = EntropyGraph2.get_edges_to_cut_within_1(n)
 # os.makedirs(outdir, exist_ok=True)
 # edges_to_cut = EntropyGraph2.get_edges_to_cut_within_2(n)
 
-g = EntropyGraph2(n)
-g.draw_with_highlighted_edges(edges_to_cut, show_names=False, title=f'n_{2}_before_cutting', outdir=outdir)
-for channel_order in product(channels, repeat=len(edges_to_cut)):
-    g = EntropyGraph2(n)
-    g.cut_edges(edges_to_cut, channel_order)
-    g.draw(show_names=False, title=''.join(channel_order), outdir=outdir)
+# g = EntropyGraph2(n)
+# g.draw_with_highlighted_edges(edges_to_cut, show_names=False, title=f'n_{n}_before_cutting', outdir=outdir)
+# for channel_order in product(channels, repeat=len(edges_to_cut)):
+#     g = EntropyGraph2(n)
+#     g.cut_edges(edges_to_cut, channel_order)
+#     g.draw(show_names=False, title=''.join(channel_order), outdir=outdir)

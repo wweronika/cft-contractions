@@ -1,0 +1,3 @@
+draw_pairing --n N --pairing pairing.txt --outdir outdir
+run_all_channels --n N --pairing pairing.txt --draw_pairing=True (default true) --outdir outdir=f"output_n_{n}_pairing_{pairing_filename_without_extension}"
+run_single_channel -n N --pairing pairing.txt --channel "sstts" --outdir outdir=f"output_n_{n}_pairing_{pairing_filename_without_extension}"
